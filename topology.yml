@@ -10,8 +10,8 @@ hosts:
 
   - name: windows-host
     base_box:
-      image: windows-2019  # make sure this is the pre-built CRCZ Windows image
-      mgmt_user: Administrator
+      image: virtio-win  # make sure this is the pre-built CRCZ Windows image
+      mgmt_user: windows
       mgmt_protocol: winrm
     flavor: standard.medium  # at least 2 CPU / 4GB RAM
     boot_volume: true       # boot from volume to avoid ephemeral disk errors
