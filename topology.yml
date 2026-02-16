@@ -13,7 +13,7 @@ hosts:
       image: window-2019
       mgmt_user: windows
       mgmt_protocol: winrm
-    flavor: standard.small
+    flavor: standard.medium
 
 routers:
   - name: router
