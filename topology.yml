@@ -11,7 +11,7 @@ hosts:
   - name: windows-host
     base_box:
       image: Windows-Server-2022 # make sure this is the pre-built CRCZ Windows image
-      mgmt_ur: windows
+      mgmt_user: windows
       mgmt_protocol: winrm
     flavor: standard.medium  # at least 2 CPU / 4GB RAM
     timeout: 600            # 10 minutes for slow boot
