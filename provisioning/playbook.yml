@@ -32,8 +32,8 @@
 
 # ==============================
 # Windows Client Configuration
-# (No external collections required)
 # ==============================
+
 - name: set up windows client
   hosts: windows-host
   gather_facts: yes
@@ -67,9 +67,9 @@
 
     - name: Reboot Windows host to apply RDP changes
       ansible.windows.win_reboot:
-        reboot_timeout: 1200
-        pre_reboot_delay: 10
-        post_reboot_delay: 30
+        reboot_timeout: 1800
+        pre_reboot_delay: 5
+        post_reboot_delay: 60
 
 
 # ==============================
@@ -83,4 +83,33 @@
     - role: sandbox-logging
       slf_destination_port: '{% if hostvars["man"] is defined -%} 514 {%- else -%} 515 {%- endif %}'
 
-...
+
+# ==============================
+# Fix Windows Hostname Reboot (SAFE VERSION)
+# ==============================
+
+- name: remove stack name prefix from hostnames of winrm nodes
+  hosts: windows-host
+  gather_facts: yes
+  tasks:
+
+    - name: Set Windows hostname
+      ansible.windows.win_hostname:
+        name: "{{ inventory_hostname }}"
+      register: rename_result
+
+    # Reboot asynchronously only if required
+    - name: Reboot Windows after hostname change (async safe)
+      ansible.windows.win_reboot:
+        reboot_timeout: 1800
+      async: 1
+      poll: 0
+      when: rename_result.reboot_required
+
+    # Wait for WinRM to become reachable again
+    - name: Wait for WinRM to come back online
+      wait_for_connection:
+        timeout: 1800
+        delay: 30
+      when: rename_result.reboot_required
+
