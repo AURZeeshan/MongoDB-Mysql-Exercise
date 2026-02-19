@@ -32,6 +32,7 @@
 
 # ==============================
 # Windows Client Configuration
+# (NO reboot here)
 # ==============================
 
 - name: set up windows client
@@ -65,12 +66,6 @@
         members: user
         state: present
 
-    - name: Reboot Windows host to apply RDP changes
-      ansible.windows.win_reboot:
-        reboot_timeout: 1800
-        pre_reboot_delay: 5
-        post_reboot_delay: 60
-
 
 # ==============================
 # Command Logging (Linux Server)
@@ -85,7 +80,7 @@
 
 
 # ==============================
-# Fix Windows Hostname Reboot (SAFE VERSION)
+# Windows Hostname (ONLY reboot here)
 # ==============================
 
 - name: remove stack name prefix from hostnames of winrm nodes
@@ -98,15 +93,13 @@
         name: "{{ inventory_hostname }}"
       register: rename_result
 
-    # Reboot asynchronously only if required
-    - name: Reboot Windows after hostname change (async safe)
+    - name: Reboot Windows asynchronously if required
       ansible.windows.win_reboot:
         reboot_timeout: 1800
       async: 1
       poll: 0
       when: rename_result.reboot_required
 
-    # Wait for WinRM to become reachable again
     - name: Wait for WinRM to come back online
       wait_for_connection:
         timeout: 1800
@@ -115,13 +108,13 @@
 
 
 # ==============================
-# (Optional) Additional Linux Hostname Cleanup
+# Linux Hostname Cleanup
 # ==============================
 
 - name: remove stack name prefix from hostnames of Linux nodes
   hosts:
     - server
-    - router
+    - routers
     - man
   gather_facts: yes
   become: yes
