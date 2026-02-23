@@ -83,29 +83,29 @@
 # Windows Hostname (ONLY reboot here)
 # ==============================
 
-- name: remove stack name prefix from hostnames of winrm nodes
-  hosts: windows-host
-  gather_facts: yes
-  tasks:
+# - name: remove stack name prefix from hostnames of winrm nodes
+#   hosts: windows-host
+#   gather_facts: yes
+#   tasks:
 
-    - name: Set Windows hostname
-      ansible.windows.win_hostname:
-        name: "{{ inventory_hostname }}"
-      register: rename_result
+#     - name: Set Windows hostname
+#       ansible.windows.win_hostname:
+#         name: "{{ inventory_hostname }}"
+#       register: rename_result
 
-    - name: Reboot Windows asynchronously if required
-      ansible.windows.win_reboot:
-        reboot_timeout: 1800
-      async: 1
-      poll: 0
-      when: rename_result.reboot_required
+#     - name: Reboot Windows asynchronously if required
+#       ansible.windows.win_reboot:
+#         reboot_timeout: 1800
+#       async: 1
+#       poll: 0
+#       when: rename_result.reboot_required
 
-    - name: Wait for WinRM to come back online
-      wait_for_connection:
-        timeout: 1800
-        delay: 60
-        sleep: 10
-      when: rename_result.reboot_required
+#     - name: Wait for WinRM to come back online
+#       wait_for_connection:
+#         timeout: 1800
+#         delay: 60
+#         sleep: 10
+#       when: rename_result.reboot_required
 
 
 # ==============================
