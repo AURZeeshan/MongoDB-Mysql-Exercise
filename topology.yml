@@ -14,8 +14,6 @@ hosts:
       mgmt_user: windows
       mgmt_protocol: winrm
     flavor: standard.medium
-    # IMPORTANT for WinRM stability
-    user_access: true
 
 routers:
   - name: router
